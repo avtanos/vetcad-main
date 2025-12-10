@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { api } from '@/shared/api';
-import { FaCalendarAlt, FaPlus, FaClock, FaUserMd } from 'react-icons/fa';
+import { FaCalendarAlt, FaPlus, FaClock } from 'react-icons/fa';
 import { AppointmentCreateForm } from '@/features/appointment-create/ui/AppointmentCreateForm';
 import { Modal } from '@/shared/ui/Modal';
-import { useUserStore } from '@/entities/user/model/user-store';
 
 interface Appointment {
   id: number;
@@ -16,7 +15,6 @@ interface Appointment {
 }
 
 export const AppointmentsPage = () => {
-  const { user } = useUserStore();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

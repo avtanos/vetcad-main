@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/input';
 
 interface ConsultationAnswerFormProps {
   consultationId: number;

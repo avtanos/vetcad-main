@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { api } from '@/shared/api';
 import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/input';
 import { usePets } from '@/entities/pet/model/PetContext';
 
 interface ConsultationCreateFormProps {

@@ -10,11 +10,6 @@ interface AppointmentCreateFormProps {
   onCancel: () => void;
 }
 
-interface Pet {
-  id: number;
-  name: string;
-}
-
 export const AppointmentCreateForm = ({ vetId, onSave, onCancel }: AppointmentCreateFormProps) => {
   const { pets } = usePets();
   const [petId, setPetId] = useState<number | ''>('');
