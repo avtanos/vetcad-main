@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { FaHome, FaPaw, FaRobot, FaBell, FaNewspaper, FaShoppingBag, FaUserMd, FaBriefcase, FaBuilding, FaUsers, FaChartBar, FaBox, FaStethoscope } from 'react-icons/fa';
+import { FaHome, FaPaw, FaRobot, FaBell, FaNewspaper, FaShoppingBag, FaUserMd, FaBriefcase, FaBuilding, FaUsers, FaBox, FaStethoscope } from 'react-icons/fa';
 import type { ReactElement } from "react";
 
 export interface NavLinkItem {

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { api } from '@/shared/api';
 import { useUserStore } from '@/entities/user/model/user-store';
 import type { Product } from '@/entities/product/model/ProductTypes';
-import { ProductCard } from '@/entities/product/ui/ProductCard';
 import { AddProductForm } from '@/features/add-product/ui/AddProductForm';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { Modal } from '@/shared/ui/Modal';
@@ -101,6 +100,9 @@ export const MyProductsPage = () => {
       description: product.description,
       img_url: product.img_url,
       is_active: product.is_active,
+      subcategory_id: product.subcategory_id,
+      price: product.price?.toString() || '',
+      stock_quantity: product.stock_quantity,
     });
     setShowEditForm(true);
   };
@@ -115,7 +117,7 @@ export const MyProductsPage = () => {
         price: editForm.price || undefined,
         stock_quantity: editForm.stock_quantity || undefined,
       };
-      const updatedProduct = await api.put<Product>(`/v1/reference/ref_shop/${editingProduct.id}`, updateData);
+      const updatedProduct = await api.put<typeof updateData, Product>(`/v1/reference/ref_shop/${editingProduct.id}`, updateData);
       setProducts(prev => prev.map(p => p.id === editingProduct.id ? updatedProduct : p));
       setShowEditForm(false);
       setEditingProduct(null);

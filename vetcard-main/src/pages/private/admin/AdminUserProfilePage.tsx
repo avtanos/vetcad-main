@@ -82,7 +82,7 @@ export const AdminUserProfilePage = () => {
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
           <p className="text-red-600">{error || 'Пользователь не найден'}</p>
         </div>
-        <Button onClick={() => navigate('/admin')} variant="secondary">
+        <Button onClick={() => navigate('/admin')} variant="outline">
           <FaArrowLeft className="mr-2" /> Вернуться к списку пользователей
         </Button>
       </div>
@@ -99,7 +99,7 @@ export const AdminUserProfilePage = () => {
       <div className="mb-6">
         <Button
           onClick={() => navigate('/admin')}
-          variant="secondary"
+          variant="outline"
           className="mb-4"
         >
           <FaArrowLeft className="mr-2" /> Вернуться к списку пользователей

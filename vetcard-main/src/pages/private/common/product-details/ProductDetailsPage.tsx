@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/shared/api';
-import { useUserStore } from '@/entities/user/model/user-store';
 import type { Product } from '@/entities/product/model/ProductTypes';
 import { FaArrowLeft, FaSpinner, FaShoppingCart } from 'react-icons/fa';
 import { Button } from '@/shared/ui/Button';
@@ -10,7 +9,6 @@ import { useAuth } from '@/entities/user/model/useAuth';
 export const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useUserStore();
   const { isAuthenticated } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);

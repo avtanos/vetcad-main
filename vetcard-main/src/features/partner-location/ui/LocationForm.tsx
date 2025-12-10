@@ -48,7 +48,7 @@ export const LocationForm = ({ onSave, onCancel, initialData }: LocationFormProp
             longitude: position.coords.longitude
           }));
         },
-        (error) => {
+        () => {
           setError('Не удалось получить текущее местоположение');
         }
       );

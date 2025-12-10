@@ -32,7 +32,7 @@ export const PartnerProductsManager = () => {
       });
       setForm({ name_ru: '', name_kg: '', description: '', is_active: true });
       alert('Товар успешно создан!');
-    } catch (e) {
+    } catch (e: any) {
       alert('Ошибка при создании товара');
     } finally {
       setLoading(false);

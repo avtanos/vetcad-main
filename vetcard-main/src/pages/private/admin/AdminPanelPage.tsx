@@ -547,7 +547,7 @@ export const AdminPanelPage = () => {
                   setShowCreateModal(false);
                   setCreateForm({ username: '', email: '', password: '', role: 1 });
                 }}
-                variant="secondary"
+                variant="outline"
               >
                 Отмена
               </Button>
@@ -618,7 +618,7 @@ export const AdminPanelPage = () => {
                   setSelectedUser(null);
                   setEditForm({});
                 }}
-                variant="secondary"
+                variant="outline"
               >
                 Отмена
               </Button>
