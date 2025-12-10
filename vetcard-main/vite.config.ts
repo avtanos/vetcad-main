@@ -5,6 +5,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  base: '/vetcad-main/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
