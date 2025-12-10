@@ -1,0 +1,436 @@
+{
+  "home": "Home",
+  "about": "About",
+  "login": "Sign In",
+  "register": "Register",
+  "auth": {
+    "entrence": "Sign in to account",
+    "entrence_text": "Welcome! Please enter your credentials.",
+    "login": "Login",
+    "password": "Password",
+    "loginPlaceholder": "Enter login",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Sign In",
+    "loading": "Signing in...",
+    "create_account": "Create account",
+    "forgot_password": "Forgot password?",
+    "error": "Invalid login or password",
+    "logout": "Sign Out"
+  },
+ "register_form": {
+  "step1": {
+    "title": "Login credentials",
+    "description": "Create your login and password.",
+    "username": "Login",
+    "password": "Password",
+    "confirmPassword": "Confirm password"
+  },
+  "step2": {
+    "title": "Personal data",
+    "description": "Enter your last name, first name, middle name and email to start.",
+    "lastName": "Last name",
+    "firstName": "First name",
+    "middleName": "Middle name",
+    "email": "Email"
+  },
+  "step3": {
+    "title": "Email verification",
+    "description": "We sent a code to {{email}}. Enter it below.",
+    "code": "Verification code",
+    "resend": "Resend code",
+    "sent": "Code \"123456\" sent (placeholder)."
+  },
+  "step4": {
+    "title": "What are you registering as?",
+    "description": "This will help us provide you with the best experience.",
+    "roles": {
+      "petOwner": "Pet Owner",
+      "veterinarian": "Veterinarian",
+      "partner": "Partner"
+    }
+  },
+  "step5": {
+    "vet": {
+      "title": "Veterinarian information",
+      "description": "Please fill in your qualification data.",
+      "clinicName": "Clinic",
+      "position": "Position",
+      "experience": "Experience",
+      "specialization": "Specialization",
+      "licenseNumber": "License number",
+      "city": "City",
+      "address": "Address"
+    },
+    "partner": {
+      "title": "Partner information",
+      "description_data": "Fill in your organization data.",
+      "name": "Name",
+      "type": "Type (Clinic/Store)",
+      "city": "City",
+      "address": "Address",
+      "phone": "Phone",
+      "website": "Website",
+      "description": "Description",
+      "logo": "Logo"
+    }
+  },
+  "step_titles": {
+    "step_indicator": "Step {{current}} of {{total}}",
+    "personal": "Personal data",
+    "verification": "Verification",
+    "credentials": "Account credentials",
+    "user_type": "Profile type",
+    "vet": "Veterinarian data",
+    "partner": "Partner data",
+    "step": "Step"
+  },
+  "buttons": {
+    "next": "Next",
+    "submit": "Register",
+    "back": "Back",
+    "home": "Home"
+  },
+  "messages": {
+    "registration_complete": "Registration complete!",
+    "redirecting": "You will be redirected shortly...",
+    "new_user": "New user"
+  },
+  "errors": {
+    "username_short": "Login must be at least 4 characters.",
+    "password_short": "Password must be at least 6 characters.",
+    "password_mismatch": "Passwords do not match.",
+    "lastName_required": "Please enter your last name.",
+    "firstName_required": "Please enter your first name.",
+    "middleName_required": "Please enter your middle name.",
+    "email_invalid": "Enter a valid email.",
+    "code_invalid": "Invalid verification code.",
+    "userType_required": "Please select registration type."
+  }
+},
+  "navigation": {
+    "dashboard": "Dashboard",
+    "myPets": "My Pets",
+    "articles": "Articles",
+    "products": "Products",
+    "reminders": "Reminders",
+    "assistant": "Assistant",
+    "myData": "My Data",
+    "profile": "Profile"
+  },
+  "common": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "pets": {
+    "addPet": "Add pet",
+    "editPet": "Edit pet",
+    "deletePet": "Delete pet",
+    "name": "Name",
+    "type": "Type",
+    "breed": "Breed",
+    "age": "Age",
+    "weight": "Weight",
+    "description": "Description"
+  },
+  "forms": {
+    "required": "Required field",
+    "invalidEmail": "Invalid email format",
+    "passwordTooShort": "Password must contain at least 6 characters"
+  },
+  "mainPage": {
+    "mainTheme": "Caring for your <1>pet</1> in a new way",
+    "mainText1": "VetCard is a unified space for medical records, reminders and smart interaction with your pet.",
+    "button1": "Try for free",
+    "button2": "Learn more",
+    "opportunity": "VetCard Features",
+    "opportunity_text": "Everything under control, without unnecessary hassle.",
+    "title1": "Unified medical record",
+    "opportunity_card1": "Complete history of diseases, vaccinations and procedures in one place.",
+    "title2": "Reminders",
+    "opportunity_card2": "Smart notifications about appointments, medications and vaccinations.",
+    "title3": "AI Assistant",
+    "opportunity_card3": "Care and nutrition advice based on veterinarian recommendations.",
+    "mainText2": "VetCard for all types of animals",
+    "mainText3": "Our system is suitable not only for pets, but also for farm animals. VetCard helps track health, vaccinations and care for any type of animal - from cats to cattle."
+  },
+  "footer": {
+    "text1": "Your digital passport for pet health.",
+    "navigation": "Navigation",
+    "support": "Support",
+    "article": "Articles",
+    "products": "Products",
+    "assistant": "AI Assistant",
+    "about": "About",
+    "faq": "FAQ",
+    "contacts": "Contacts",
+    "rights": " VetCard. All rights reserved.",
+    "terms": "Terms of Use",
+    "policy": "Privacy Policy"
+  },
+  "aboutPage": {
+    "aboutTheme": "VetCard - assistant for tails",
+    "aboutText1": "Every pet deserves care and attention. The VetCard app helps pet owners and veterinarians stay connected and track the health of their furry friends.",
+    "aboutText2": "You will always be aware of vaccinations, doctor visits and medical history. Everything at hand - in one click."
+  },
+  "forgotPassword": {
+    "recovery": "Password recovery",
+    "success": "Password successfully changed! Now you can sign in.",
+    "emailPlaceholder": "Enter email",
+    "sendCode": "Send code",
+    "codeSent": "Code sent to {{email}}",
+    "codePlaceholder": "Enter code from email",
+    "verifyCode": "Verify code",
+    "newPasswordPlaceholder": "New password",
+    "changePassword": "Change password"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "pets": "Active pets",
+    "events": "Upcoming events",
+    "quickActions": "Quick actions",
+    "addPet": "Add pet",
+    "chatWithAI": "Chat with assistant",
+    "products": "Select product",
+    "upcoming": "Upcoming events",
+    "all": "All",
+    "noReminders": "No scheduled reminders.",
+    "pet": "Pet"
+  },
+  "sidebar": {
+    "management": "Management",
+    "tools": "Tools",
+    "workspace": "Workspace",
+    "home": "Home",
+    "mypets": "My Pets",
+    "reminders": "Reminders",
+    "assistant": "AI Assistant",
+    "articles": "Articles",
+    "products": "Products",
+    "mydata": "My Data",
+    "collapse": "Collapse",
+    "cabinet": "Cabinet",
+    "myProducts": "My Products",
+    "specialists": "Specialists",
+    "admin": "Administration",
+    "adminPanel": "Admin Panel"
+  },
+  "myPetsPage": {
+    "myPets": "My Pets",
+    "controlText": "Manage profiles of your beloved pets.",
+    "addButton": "Add pet"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "subtitle": "Your personal assistant for pet care.",
+    "addButton": "Add reminder",
+    "editTitle": "Edit reminder",
+    "newTitle": "New reminder",
+    "filters": {
+      "planned": "Planned",
+      "done": "Done",
+      "all": "All"
+    },
+    "empty": "No reminders in this category yet.",
+    "deleteConfirm": "Are you sure you want to delete this reminder?"
+  },
+  "reminderForm": {
+    "eventLabel": "Event",
+    "eventPlaceholder": "For example, Routine checkup",
+    "dateLabel": "Date",
+    "petLabel": "Pet",
+    "cancel": "Cancel",
+    "save": "Save",
+    "add": "Add",
+    "alertMissingFields": "Please fill in date and event.",
+    "all": "All pets"
+  },
+    "chat": {
+    "title": "VetCard AI Assistant",
+    "subtitle": "How can I help you today?",
+    "suggestions": [
+      "What food is best for a puppy?",
+      "How often should vaccinations be given?",
+      "Signs of a healthy pet"
+    ],
+    "typing": "AI is typing...",
+    "placeholder": "Ask something..."
+  },
+  "articles": {
+    "title": "Knowledge Base",
+    "description": "Useful articles and tips for caring for your pets.",
+    "notFound": {
+      "title": "Articles not found",
+      "description": "Try changing your query or selecting another category."
+    },
+    "categories": {
+      "all": "All",
+      "nutrition": "Nutrition",
+      "care": "Care",
+      "health": "Health",
+      "behavior": "Behavior"
+    }
+  },
+  "articlesFind": {
+    "searchPlaceholder": "Find article..."
+},
+  "products": {
+    "title": "Products and Services",
+    "searchPlaceholder": "Search by name...",
+    "subtitle": "Recommended products and services from our partners."
+},
+  "support": {
+    "title": "Help Center",
+    "subtitle": "Everything you need to know in one place.",
+    "backToDashboard": "Back to cabinet",
+    "backHome": "Back to home",
+    "sections": {
+      "faq": "FAQ",
+      "contacts": "Contacts",
+      "terms": "Terms of Use",
+      "privacy": "Privacy Policy"
+    },
+    "contact": {
+      "phone": "Call us",
+      "telegram": "Write in Telegram",
+      "email": "Send email"
+    },
+    "form": {
+      "title": "Feedback form",
+      "email": "Your Email",
+      "message": "Your message...",
+      "submit": "Send"
+    },
+    "termsText": "Need to clarify text...",
+    "privacyText": "Need to clarify text..."
+  },
+  "faq": {
+    "q1": "How to register in VetCard?",
+    "a1": "Click the \"Register\" button on the main page and follow the instructions. You will only need your full name and email.",
+    "q2": "I am a veterinarian. How do I get access to the doctor profile?",
+    "a2": "When registering, at step 4, select the \"Veterinarian\" role. After that, you will be prompted to fill in professional data.",
+    "q3": "How many pets can I add?",
+    "a3": "Currently, the number of pets on one account is unlimited. You can create a card for each of your beloved pets.",
+    "q4": "What to do if I don't know the exact date of birth of the pet?",
+    "a4": "Enter an approximate date. The main thing is to indicate the year so that the system can correctly track age-related changes and recommend procedures.",
+    "q5": "Is my data safe?",
+    "a5": "Yes. We use modern encryption methods and best practices to protect your data.",
+    "q6": "How does the AI Assistant work?",
+    "a6": "AI uses a language model trained on veterinary data. It helps but does not replace a doctor.",
+    "q7": "How do reminders work?",
+    "a7": "You can create a reminder about vaccination, medications or food. We will send a notification one day before the event.",
+    "q8": "Can I delete a pet profile?",
+    "a8": "Yes, on the pet card there is a menu where you can select \"Delete\". This action is irreversible.",
+    "q9": "Can I add a second owner for one pet?",
+    "a9": "Not yet. But this feature is in development.",
+    "q10": "What animals is the service suitable for?",
+    "a10": "For cats and dogs, as well as other animals - birds, rodents, reptiles.",
+    "q11": "What to do if I forgot my password?",
+    "a11": "On the login page, click \"Forgot password?\" and follow the instructions.",
+    "q12": "Does VetCard have a mobile app?",
+    "a12": "Currently only web version, but mobile app is planned.",
+    "q13": "How can I update information?",
+    "a13": "Edit the profile on the user page or in the pet card.",
+    "q14": "Is this service paid?",
+    "a14": "Basic features are free. PRO features may appear later.",
+    "q15": "How to contact support?",
+    "a15": "Write to us at email in the \"Contacts\" section. We respond within 24 hours."
+  },
+  "specialists": {
+    "title": "Specialists",
+    "subtitle": "Find a veterinarian and book an appointment",
+    "bookAppointment": "Book appointment",
+    "loginToBook": "Sign in to book",
+    "noSpecialists": "No specialists found",
+    "loading": "Loading specialists...",
+    "error": "Error loading specialists",
+    "appointment": {
+      "title": "Appointment with",
+      "pet": "Pet",
+      "date": "Date",
+      "time": "Time",
+      "reason": "Reason",
+      "submit": "Book",
+      "cancel": "Cancel",
+      "selectPet": "Select pet",
+      "selectDate": "Select date",
+      "selectTime": "Select time",
+      "enterReason": "Describe reason for visit (optional)",
+      "specialization": "Specialization",
+      "noPets": "You don't have any pets yet. Add a pet to book an appointment."
+    }
+  },
+  "myProducts": {
+    "title": "My Products",
+    "subtitle": "Manage your products",
+    "addProduct": "Add product",
+    "editProduct": "Edit product",
+    "deleteProduct": "Delete product",
+    "noProducts": "You don't have any products yet.",
+    "addFirst": "Add your first product",
+    "loading": "Loading products...",
+    "error": "Error loading products",
+    "deleteConfirm": "Are you sure you want to delete this product?",
+    "deleteSuccess": "Product deleted successfully",
+    "deleteError": "Error deleting product"
+  },
+  "productDetails": {
+    "buy": "Buy",
+    "loginToBuy": "Sign in to buy",
+    "addToCart": "Add to cart",
+    "description": "Description",
+    "price": "Price",
+    "stock": "In stock",
+    "outOfStock": "Out of stock",
+    "category": "Category",
+    "subcategory": "Subcategory"
+  },
+  "vetCabinet": {
+    "title": "Veterinarian Cabinet",
+    "patients": "Patients",
+    "appointments": "Appointments",
+    "consultations": "Consultations",
+    "articles": "Articles",
+    "noPatients": "No patients yet",
+    "noAppointments": "No appointments",
+    "noConsultations": "No consultations",
+    "edit": "Edit",
+    "view": "View",
+    "answer": "Answer",
+    "status": "Status",
+    "pending": "Pending",
+    "answered": "Answered",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "partnerCabinet": {
+    "title": "Partner Cabinet",
+    "schedule": "Schedule",
+    "location": "Location",
+    "services": "Services",
+    "employees": "Employees",
+    "promotions": "Promotions",
+    "statistics": "Statistics"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "users": "Users",
+    "search": "Search users...",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions",
+    "view": "View",
+    "edit": "edit",
+    "delete": "Delete",
+    "active": "Active",
+    "inactive": "Inactive"
+  }
+}
+

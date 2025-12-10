@@ -27,7 +27,7 @@ class Profile(Base):
     city = Column(String, nullable=True)
     address = Column(String, nullable=True)
     logo = Column(String, nullable=True)
-    role = Column(Integer, default=1)  # 1=petOwner, 2=veterinarian, 3=partner
+    role = Column(Integer, default=1)  # 1=petOwner, 2=veterinarian, 3=partner, 4=admin
     
     # Для ветеринаров
     clinic = Column(String, nullable=True)

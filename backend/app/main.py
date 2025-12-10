@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import auth, pet, reference, parser, assistant, chat, vet_cabinet, partner_cabinet, owner_cabinet
+from app.routers import auth, pet, reference, parser, assistant, chat, vet_cabinet, partner_cabinet, owner_cabinet, admin, product_category
 
 # Импортируем все модели для создания таблиц
 from app.models import user as user_model, pet as pet_model, reference as reference_model, article as article_model, reminder as reminder_model
@@ -35,6 +35,7 @@ app.include_router(chat.router, prefix="/api/v1/ai", tags=["ai"])
 app.include_router(vet_cabinet.router, prefix="/api/v1/vet", tags=["vet-cabinet"])
 app.include_router(partner_cabinet.router, prefix="/api/v1/partner", tags=["partner-cabinet"])
 app.include_router(owner_cabinet.router, prefix="/api/v1/owner", tags=["owner-cabinet"])
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
 
 
 @app.get("/")

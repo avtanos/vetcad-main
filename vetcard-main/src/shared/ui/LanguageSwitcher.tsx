@@ -17,7 +17,7 @@ export const LanguageSwitcher = () => {
     }, []);
 
 
-    const handleLanguageChange = (language: 'ru' | 'kg') => {
+    const handleLanguageChange = (language: 'ru' | 'kg' | 'en') => {
         changeLanguage(language);
     };
 
@@ -38,12 +38,22 @@ export const LanguageSwitcher = () => {
             <button
                 onClick={() => handleLanguageChange('kg')}
                 className={`${baseButtonStyles} ${
-                    activeLang.startsWith('kg')
+                    activeLang === 'kg'
                         ? 'bg-slate-800 text-white shadow-md'
                         : 'bg-slate-200 text-slate-500 hover:bg-slate-300 hover:text-slate-900'
                 }`}
             >
                 KG
+            </button>
+            <button
+                onClick={() => handleLanguageChange('en')}
+                className={`${baseButtonStyles} ${
+                    activeLang === 'en'
+                        ? 'bg-slate-800 text-white shadow-md'
+                        : 'bg-slate-200 text-slate-500 hover:bg-slate-300 hover:text-slate-900'
+                }`}
+            >
+                EN
             </button>
         </div>
     );

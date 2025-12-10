@@ -8,7 +8,7 @@ except ImportError:
     OLLAMA_AVAILABLE = False
     ollama = None
 
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from app.models.pet import Pet
 from app.models.user import User
 from app.services.pet_tools import PetTools
@@ -70,28 +70,46 @@ class AIService:
 5. Можешь предлагать создать напоминания о важных событиях (прививки, осмотры, кормление)
 6. Отвечай на русском языке, если пользователь пишет на русском
 
+ВАЖНО - Использование данных сайта:
+- Если в контексте есть список СПЕЦИАЛИСТОВ (ветеринаров), ОБЯЗАТЕЛЬНО рекомендуй их при вопросах о здоровье, лечении, консультациях
+- Указывай конкретные имена специалистов, их клиники и специализации из предоставленного списка
+- Если в контексте есть список ТОВАРОВ, можешь рекомендовать их при вопросах о кормах, игрушках, аксессуарах
+- Указывай конкретные названия товаров и цены из предоставленного списка
+- При вопросах о конкретном питомце используй его имя и характеристики из контекста
+
 Формат ответов:
 - Краткие и структурированные ответы
 - Используй списки и выделения для важной информации
-- Предлагай конкретные действия, когда это уместно"""
+- Предлагай конкретные действия, когда это уместно
+- Рекомендуй конкретных специалистов и товары из предоставленных данных"""
     
-    def _build_context(self, user: User, pets: List[Pet], species_dict: Dict[int, str]) -> str:
-        """Строит контекст о пользователе и его питомцах"""
+    def _build_context(
+        self, 
+        user: User, 
+        pets: List[Pet], 
+        species_dict: Dict[int, str],
+        veterinarians: Optional[List[Dict[str, Any]]] = None,
+        products: Optional[List[Dict[str, Any]]] = None
+    ) -> str:
+        """Строит контекст о пользователе, его питомцах, доступных специалистах и товарах"""
         context_parts = []
         
+        # Информация о питомцах
         if pets:
-            context_parts.append("Информация о питомцах пользователя:")
+            context_parts.append("=== ИНФОРМАЦИЯ О ПИТОМЦАХ ПОЛЬЗОВАТЕЛЯ ===")
+            context_parts.append("ВАЖНО: При ответах на вопросы используй конкретные данные о питомцах пользователя!")
             for pet in pets:
                 species_name = species_dict.get(pet.species, "Неизвестный вид")
-                pet_info = f"- {pet.name} ({species_name})"
+                pet_info = f"\nПитомец: {pet.name}"
+                pet_info += f"\n  Вид: {species_name}"
                 if pet.birth_date:
-                    pet_info += f", дата рождения: {pet.birth_date}"
+                    pet_info += f"\n  Дата рождения: {pet.birth_date}"
                 if pet.breed:
-                    pet_info += f", порода: {pet.breed}"
+                    pet_info += f"\n  Порода: {pet.breed}"
                 if pet.weight:
-                    pet_info += f", вес: {pet.weight} кг"
+                    pet_info += f"\n  Вес: {pet.weight} кг"
                 if pet.special_notes:
-                    pet_info += f", особые пометки: {pet.special_notes}"
+                    pet_info += f"\n  Особые пометки: {pet.special_notes}"
                 context_parts.append(pet_info)
                 
                 # Добавляем анализ здоровья
@@ -101,12 +119,54 @@ class AIService:
         else:
             context_parts.append("У пользователя пока нет зарегистрированных питомцев.")
         
-        # Добавляем информацию о доступных инструментах
-        context_parts.append("\nДоступные инструменты:")
-        context_parts.append("- Анализ здоровья питомцев")
-        context_parts.append("- Рекомендации по прививкам")
-        context_parts.append("- Советы по кормлению")
-        context_parts.append("- Создание напоминаний о важных событиях")
+        # Информация о специалистах (ветеринарах)
+        if veterinarians:
+            context_parts.append("\n=== ДОСТУПНЫЕ СПЕЦИАЛИСТЫ (ВЕТЕРИНАРЫ) ===")
+            context_parts.append("При необходимости консультации или записи на прием, рекомендую следующих специалистов:")
+            for vet in veterinarians[:5]:  # Ограничиваем до 5 для контекста
+                vet_info = f"- {vet.get('first_name', '')} {vet.get('last_name', '')}".strip()
+                if not vet_info or vet_info == "-":
+                    vet_info = f"- {vet.get('username', 'Ветеринар')}"
+                if vet.get('clinic'):
+                    vet_info += f" ({vet.get('clinic')})"
+                if vet.get('specialization'):
+                    vet_info += f", специализация: {vet.get('specialization')}"
+                if vet.get('city'):
+                    vet_info += f", город: {vet.get('city')}"
+                context_parts.append(vet_info)
+            if len(veterinarians) > 5:
+                context_parts.append(f"... и еще {len(veterinarians) - 5} специалистов")
+        
+        # Информация о товарах
+        if products:
+            context_parts.append("\n=== ДОСТУПНЫЕ ТОВАРЫ ===")
+            context_parts.append("При необходимости покупки товаров для питомца, рекомендую следующие варианты:")
+            # Группируем товары по категориям для лучшей структуры
+            products_by_category = {}
+            for product in products[:10]:  # Ограничиваем до 10 для контекста
+                category = product.get('subcategory', {}).get('name_ru', 'Без категории') if product.get('subcategory') else 'Без категории'
+                if category not in products_by_category:
+                    products_by_category[category] = []
+                products_by_category[category].append(product)
+            
+            for category, cat_products in list(products_by_category.items())[:3]:  # Максимум 3 категории
+                context_parts.append(f"\n{category}:")
+                for product in cat_products[:3]:  # Максимум 3 товара на категорию
+                    product_info = f"  - {product.get('name_ru', 'Товар')}"
+                    if product.get('price'):
+                        product_info += f" ({product.get('price')} сом)"
+                    if product.get('description'):
+                        desc = product.get('description', '')[:50]  # Первые 50 символов
+                        product_info += f" - {desc}..."
+                    context_parts.append(product_info)
+        
+        # Добавляем инструкции для AI
+        context_parts.append("\n=== ИНСТРУКЦИИ ДЛЯ AI ===")
+        context_parts.append("1. При ответах на вопросы о здоровье питомцев используй информацию о конкретных питомцах пользователя")
+        context_parts.append("2. Если вопрос касается симптомов или проблем со здоровьем, РЕКОМЕНДУЙ обратиться к специалисту из списка выше")
+        context_parts.append("3. При вопросах о товарах (корм, игрушки, аксессуары) МОЖЕШЬ РЕКОМЕНДОВАТЬ товары из списка выше")
+        context_parts.append("4. Всегда учитывай возраст, породу и особые пометки питомцев при даче рекомендаций")
+        context_parts.append("5. Если вопрос касается конкретного питомца, используй его имя и характеристики")
         
         return "\n".join(context_parts)
     
@@ -116,7 +176,9 @@ class AIService:
         user: User,
         pets: List[Pet],
         species_dict: Dict[int, str],
-        conversation_history: Optional[List[Dict[str, str]]] = None
+        conversation_history: Optional[List[Dict[str, str]]] = None,
+        veterinarians: Optional[List[Dict[str, Any]]] = None,
+        products: Optional[List[Dict[str, Any]]] = None
     ) -> str:
         """
         Отправляет сообщение в AI и получает ответ
@@ -127,13 +189,15 @@ class AIService:
             pets: Список питомцев пользователя
             species_dict: Словарь видов животных
             conversation_history: История разговора (опционально)
+            veterinarians: Список доступных ветеринаров (опционально)
+            products: Список доступных товаров (опционально)
         
         Returns:
             Ответ AI ассистента
         """
         try:
-            # Строим контекст о питомцах
-            context = self._build_context(user, pets, species_dict)
+            # Строим контекст о питомцах, специалистах и товарах
+            context = self._build_context(user, pets, species_dict, veterinarians, products)
             
             # Формируем полный промпт
             full_prompt = f"{self.system_prompt}\n\n{context}\n\nВопрос пользователя: {message}\n\nОтвет:"
@@ -152,7 +216,7 @@ class AIService:
             
             # Вызываем модель через Ollama
             if not OLLAMA_AVAILABLE:
-                return self._get_fallback_response(message, pets, species_dict)
+                return self._get_fallback_response(message, pets, species_dict, veterinarians, products)
             
             try:
                 # Используем простой вызов без истории для начала
@@ -169,25 +233,33 @@ class AIService:
                         return content
                     else:
                         print("⚠️  Пустой ответ от модели")
-                        return self._get_fallback_response(message, pets, species_dict)
+                        return self._get_fallback_response(message, pets, species_dict, veterinarians, products)
                 else:
                     print("⚠️  Неверный формат ответа от модели")
-                    return self._get_fallback_response(message, pets, species_dict)
+                    return self._get_fallback_response(message, pets, species_dict, veterinarians, products)
             except ConnectionError as e:
                 # Ollama сервер не запущен
                 print(f"❌ Ollama сервер не запущен: {e}")
-                return self._get_fallback_response(message, pets, species_dict, "Ollama сервер не запущен. Пожалуйста, запустите Ollama.")
+                return self._get_fallback_response(message, pets, species_dict, veterinarians, products, "Ollama сервер не запущен. Пожалуйста, запустите Ollama.")
             except Exception as e:
                 # Если Ollama не запущен или модель не найдена, возвращаем fallback ответ
                 error_msg = str(e)
                 print(f"❌ Ошибка при обращении к Ollama: {error_msg}")
-                return self._get_fallback_response(message, pets, species_dict, error_msg)
+                return self._get_fallback_response(message, pets, species_dict, veterinarians, products, error_msg)
                 
         except Exception as e:
             # Общая ошибка
-            return self._get_fallback_response(message, pets, species_dict, str(e))
+            return self._get_fallback_response(message, pets, species_dict, veterinarians, products, str(e))
     
-    def _get_fallback_response(self, message: str, pets: List[Pet], species_dict: Dict[int, str], error: str = "") -> str:
+    def _get_fallback_response(
+        self, 
+        message: str, 
+        pets: List[Pet], 
+        species_dict: Dict[int, str],
+        veterinarians: Optional[List[Dict[str, Any]]] = None,
+        products: Optional[List[Dict[str, Any]]] = None,
+        error: str = ""
+    ) -> str:
         """Fallback ответ, если AI недоступен"""
         message_lower = message.lower()
         

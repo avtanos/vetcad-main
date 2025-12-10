@@ -1,4 +1,3 @@
-import { Header } from "@/widgets/Header/ui/Header";
 import AboutPhoto from "@/assets/images/about.svg";
 import { useTranslation } from "react-i18next";
 
@@ -8,7 +7,6 @@ export const AboutPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-lime-50 to-green-100 text-slate-900">
-      <Header />
 
       <main className="container mx-auto px-6 md:px-20 py-20 flex flex-col md:flex-row items-center justify-between gap-12">
         <div className="w-full md:w-1/2">

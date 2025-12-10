@@ -13,9 +13,8 @@ export function useArticles() {
       setLoading(true);
       setError(null);
       try {
-        const accessToken = localStorage.getItem('authToken');
-        const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
-        const data = await api.get<any[]>('/v1/parser/articles/', headers);
+        // Публичный endpoint, токен не обязателен
+        const data = await api.get<any[]>('/v1/parser/articles/');
         const mapped = data.map((item: any) => ({
           id: item.id,
           title: item.title,
@@ -31,6 +30,7 @@ export function useArticles() {
         }));
         setArticles(mapped);
       } catch (e: any) {
+        console.error('Ошибка загрузки статей:', e);
         setError(e.message || 'Ошибка загрузки статей');
       } finally {
         setLoading(false);

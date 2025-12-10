@@ -7,7 +7,7 @@ import '@/locale/i18n';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter basename="/vetcad-main">
+    <BrowserRouter basename={import.meta.env.PROD ? "/vetcad-main" : "/"}>
       <Router />
     </BrowserRouter>
   </React.StrictMode>

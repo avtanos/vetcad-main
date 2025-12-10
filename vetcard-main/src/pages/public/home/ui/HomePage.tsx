@@ -1,4 +1,3 @@
-import { Header } from "@/widgets/Header/ui/Header";
 import PetIllustration from "@/assets/images/Veterinary-bro.png";
 import AboutPhoto from "@/assets/images/farm_animals-rafiki.svg";
 import { Button } from "@/shared/ui/Button";
@@ -9,7 +8,6 @@ export const HomePage = () => {
   const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-teal-50 text-slate-900">
-      <Header />
 
       <main className="overflow-hidden">
         <section className="container mx-auto px-6 py-16 sm:py-20 md:py-28 flex flex-col md:flex-row items-center gap-12">

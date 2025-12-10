@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '@/shared/api';
-import { FaCalendarAlt, FaMapMarkerAlt, FaConciergeBell, FaUsers, FaTags, FaChartBar, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaCalendarAlt, FaMapMarkerAlt, FaConciergeBell, FaUsers, FaTags, FaChartBar, FaPlus, FaEdit, FaTrash, FaBox } from 'react-icons/fa';
 import { EmployeeForm } from '@/features/employee-manage/ui/EmployeeForm';
+import { ScheduleForm } from '@/features/partner-schedule/ui/ScheduleForm';
+import { LocationForm } from '@/features/partner-location/ui/LocationForm';
+import { ServiceForm } from '@/features/partner-service/ui/ServiceForm';
+import { PromotionForm } from '@/features/partner-promotion/ui/PromotionForm';
 import { Modal } from '@/shared/ui/Modal';
+import { Button } from '@/shared/ui/Button';
 
 interface Schedule {
   id: number;
@@ -50,6 +56,8 @@ interface Promotion {
   end_date: string;
   is_active: boolean;
   views_count: number;
+  product_id?: number;
+  service_id?: number;
 }
 
 interface ProductStats {
@@ -64,6 +72,7 @@ interface ProductStats {
 const DAYS_OF_WEEK = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 
 export const PartnerCabinetPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'schedule' | 'location' | 'services' | 'employees' | 'promotions' | 'stats'>('schedule');
   const [schedule, setSchedule] = useState<Schedule[]>([]);
   const [location, setLocation] = useState<Location | null>(null);
@@ -75,6 +84,13 @@ export const PartnerCabinetPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [showEmployeeForm, setShowEmployeeForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [showScheduleForm, setShowScheduleForm] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
+  const [showLocationForm, setShowLocationForm] = useState(false);
+  const [showServiceForm, setShowServiceForm] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [showPromotionForm, setShowPromotionForm] = useState(false);
+  const [editingPromotion, setEditingPromotion] = useState<Promotion | null>(null);
 
   useEffect(() => {
     loadData();
@@ -136,7 +152,17 @@ export const PartnerCabinetPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-slate-800 mb-8">Кабинет партнера</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-slate-800">Кабинет партнера</h1>
+        <Button
+          onClick={() => navigate('/my-products')}
+          variant="primary"
+          className="flex items-center gap-2"
+        >
+          <FaBox />
+          Мои товары
+        </Button>
+      </div>
 
       {/* Вкладки */}
       <div className="border-b border-slate-200 mb-6">
@@ -178,7 +204,13 @@ export const PartnerCabinetPage = () => {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-slate-800">График работы</h2>
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                <button 
+                  onClick={() => {
+                    setEditingSchedule(null);
+                    setShowScheduleForm(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
                   <FaPlus /> Настроить график
                 </button>
               </div>
@@ -186,17 +218,31 @@ export const PartnerCabinetPage = () => {
                 {DAYS_OF_WEEK.map((day, index) => {
                   const daySchedule = schedule.find(s => s.day_of_week === index);
                   return (
-                    <div key={index} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50">
                       <span className="font-medium text-slate-900">{day}</span>
-                      {daySchedule?.is_closed ? (
-                        <span className="text-red-600 font-medium">Выходной</span>
-                      ) : daySchedule ? (
-                        <span className="text-slate-600">
-                          {daySchedule.open_time} - {daySchedule.close_time}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">Не установлено</span>
-                      )}
+                      <div className="flex items-center gap-4">
+                        {daySchedule?.is_closed ? (
+                          <span className="text-red-600 font-medium">Выходной</span>
+                        ) : daySchedule ? (
+                          <span className="text-slate-600">
+                            {daySchedule.open_time} - {daySchedule.close_time}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">Не установлено</span>
+                        )}
+                        {daySchedule && (
+                          <button
+                            onClick={() => {
+                              setEditingSchedule(daySchedule);
+                              setShowScheduleForm(true);
+                            }}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                            title="Редактировать"
+                          >
+                            <FaEdit />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -209,8 +255,11 @@ export const PartnerCabinetPage = () => {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-slate-800">Геолокация</h2>
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-                  <FaPlus /> Установить локацию
+                <button 
+                  onClick={() => setShowLocationForm(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
+                  {location ? <><FaEdit /> Редактировать</> : <><FaPlus /> Установить локацию</>}
                 </button>
               </div>
               {location ? (
@@ -243,7 +292,13 @@ export const PartnerCabinetPage = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-slate-800">Услуги</h2>
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                <button 
+                  onClick={() => {
+                    setEditingService(null);
+                    setShowServiceForm(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
                   <FaPlus /> Добавить услугу
                 </button>
               </div>
@@ -255,8 +310,36 @@ export const PartnerCabinetPage = () => {
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {services.map((service) => (
-                    <div key={service.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
-                      <h3 className="font-semibold text-slate-900 mb-2">{service.name_ru}</h3>
+                    <div key={service.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow relative">
+                      <div className="absolute top-4 right-4 flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingService(service);
+                            setShowServiceForm(true);
+                          }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          title="Редактировать"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm('Удалить услугу?')) {
+                              try {
+                                await api.delete(`/v1/partner/services/${service.id}`);
+                                await loadData();
+                              } catch (e: any) {
+                                alert(e.message || 'Ошибка при удалении');
+                              }
+                            }
+                          }}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Удалить"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                      <h3 className="font-semibold text-slate-900 mb-2 pr-16">{service.name_ru}</h3>
                       {service.description && (
                         <p className="text-slate-600 text-sm mb-4 line-clamp-2">{service.description}</p>
                       )}
@@ -370,7 +453,13 @@ export const PartnerCabinetPage = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-slate-800">Акции и предложения</h2>
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                <button 
+                  onClick={() => {
+                    setEditingPromotion(null);
+                    setShowPromotionForm(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
                   <FaPlus /> Создать акцию
                 </button>
               </div>
@@ -382,10 +471,45 @@ export const PartnerCabinetPage = () => {
               ) : (
                 <div className="grid gap-6 md:grid-cols-2">
                   {promotions.map((promotion) => (
-                    <div key={promotion.id} className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
-                      <h3 className="font-semibold text-slate-900 mb-2">{promotion.title}</h3>
+                    <div key={promotion.id} className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500 relative">
+                      <div className="absolute top-4 right-4 flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingPromotion(promotion);
+                            setShowPromotionForm(true);
+                          }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          title="Редактировать"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm('Удалить акцию?')) {
+                              try {
+                                await api.delete(`/v1/partner/promotions/${promotion.id}`);
+                                await loadData();
+                              } catch (e: any) {
+                                alert(e.message || 'Ошибка при удалении');
+                              }
+                            }
+                          }}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Удалить"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                      <h3 className="font-semibold text-slate-900 mb-2 pr-16">{promotion.title}</h3>
                       {promotion.description && (
                         <p className="text-slate-600 text-sm mb-4">{promotion.description}</p>
+                      )}
+                      {(promotion.product_id || promotion.service_id) && (
+                        <div className="mb-3">
+                          <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                            {promotion.product_id ? 'Товар' : 'Услуга'} ID: {promotion.product_id || promotion.service_id}
+                          </span>
+                        </div>
                       )}
                       <div className="flex justify-between items-center">
                         {promotion.discount_percent && (
@@ -447,7 +571,124 @@ export const PartnerCabinetPage = () => {
         </>
       )}
 
-      {/* Модальное окно для управления сотрудником */}
+      {/* Модальные окна */}
+      {showScheduleForm && (
+        <Modal
+          isOpen={true}
+          onClose={() => {
+            setShowScheduleForm(false);
+            setEditingSchedule(null);
+          }}
+          title={editingSchedule ? 'Редактировать график' : 'Настроить график работы'}
+        >
+          <ScheduleForm
+            initialData={editingSchedule}
+            onSave={async (scheduleData) => {
+              try {
+                await api.post('/v1/partner/schedule', scheduleData);
+                await loadData();
+                setShowScheduleForm(false);
+                setEditingSchedule(null);
+              } catch (e: any) {
+                throw new Error(e.message || 'Ошибка при сохранении графика');
+              }
+            }}
+            onCancel={() => {
+              setShowScheduleForm(false);
+              setEditingSchedule(null);
+            }}
+          />
+        </Modal>
+      )}
+
+      {showLocationForm && (
+        <Modal
+          isOpen={true}
+          onClose={() => setShowLocationForm(false)}
+          title={location ? 'Редактировать геолокацию' : 'Установить геолокацию'}
+        >
+          <LocationForm
+            initialData={location}
+            onSave={async (locationData) => {
+              try {
+                await api.post('/v1/partner/location', locationData);
+                await loadData();
+                setShowLocationForm(false);
+              } catch (e: any) {
+                throw new Error(e.message || 'Ошибка при сохранении геолокации');
+              }
+            }}
+            onCancel={() => setShowLocationForm(false)}
+          />
+        </Modal>
+      )}
+
+      {showServiceForm && (
+        <Modal
+          isOpen={true}
+          onClose={() => {
+            setShowServiceForm(false);
+            setEditingService(null);
+          }}
+          title={editingService ? 'Редактировать услугу' : 'Добавить услугу'}
+        >
+          <ServiceForm
+            initialData={editingService}
+            onSave={async (serviceData) => {
+              try {
+                if (editingService) {
+                  await api.put(`/v1/partner/services/${editingService.id}`, serviceData);
+                } else {
+                  await api.post('/v1/partner/services', serviceData);
+                }
+                await loadData();
+                setShowServiceForm(false);
+                setEditingService(null);
+              } catch (e: any) {
+                throw new Error(e.message || 'Ошибка при сохранении услуги');
+              }
+            }}
+            onCancel={() => {
+              setShowServiceForm(false);
+              setEditingService(null);
+            }}
+          />
+        </Modal>
+      )}
+
+      {showPromotionForm && (
+        <Modal
+          isOpen={true}
+          onClose={() => {
+            setShowPromotionForm(false);
+            setEditingPromotion(null);
+          }}
+          title={editingPromotion ? 'Редактировать акцию' : 'Создать акцию'}
+        >
+          <PromotionForm
+            initialData={editingPromotion}
+            onSave={async (promotionData) => {
+              try {
+                if (editingPromotion) {
+                  await api.put(`/v1/partner/promotions/${editingPromotion.id}`, promotionData);
+                } else {
+                  await api.post('/v1/partner/promotions', promotionData);
+                }
+                await loadData();
+                setShowPromotionForm(false);
+                setEditingPromotion(null);
+              } catch (e: any) {
+                throw new Error(e.message || 'Ошибка при сохранении акции');
+              }
+            }}
+            onCancel={() => {
+              setShowPromotionForm(false);
+              setEditingPromotion(null);
+            }}
+          />
+        </Modal>
+      )}
+
       {showEmployeeForm && (
         <Modal
           isOpen={true}

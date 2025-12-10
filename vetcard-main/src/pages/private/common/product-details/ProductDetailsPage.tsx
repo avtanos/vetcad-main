@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/shared/api';
+import { useUserStore } from '@/entities/user/model/user-store';
 import type { Product } from '@/entities/product/model/ProductTypes';
-import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
+import { FaArrowLeft, FaSpinner, FaShoppingCart } from 'react-icons/fa';
+import { Button } from '@/shared/ui/Button';
+import { useAuth } from '@/entities/user/model/useAuth';
 
 export const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useUserStore();
+  const { isAuthenticated } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -110,8 +116,16 @@ export const ProductDetailsPage = () => {
             </div>
 
             {/* Дополнительная информация */}
-            <div className="border-t border-slate-200 pt-6">
+            <div className="border-t border-slate-200 pt-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
+                {product.subcategory && (
+                  <div>
+                    <p className="text-sm text-slate-500 mb-1">Категория</p>
+                    <p className="font-semibold text-slate-700">
+                      {product.subcategory.name_ru}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <p className="text-sm text-slate-500 mb-1">Статус</p>
                   <p className="font-semibold">
@@ -122,6 +136,22 @@ export const ProductDetailsPage = () => {
                     )}
                   </p>
                 </div>
+                {product.price && (
+                  <div>
+                    <p className="text-sm text-slate-500 mb-1">Цена</p>
+                    <p className="font-semibold text-green-600 text-xl">
+                      {product.price} сом
+                    </p>
+                  </div>
+                )}
+                {product.stock_quantity !== undefined && (
+                  <div>
+                    <p className="text-sm text-slate-500 mb-1">В наличии</p>
+                    <p className="font-semibold text-slate-700">
+                      {product.stock_quantity} шт.
+                    </p>
+                  </div>
+                )}
                 {product.user && (
                   <div>
                     <p className="text-sm text-slate-500 mb-1">Продавец</p>
@@ -130,6 +160,48 @@ export const ProductDetailsPage = () => {
                     </p>
                   </div>
                 )}
+              </div>
+
+              {/* Кнопка покупки */}
+              <div className="pt-4">
+                {isAuthenticated && product.is_active && !(product.stock_quantity !== undefined && product.stock_quantity <= 0) ? (
+                  <Button
+                    onClick={async () => {
+                      setPurchasing(true);
+                      try {
+                        // Здесь можно добавить логику покупки
+                        // Например, создание заказа или переход на страницу оплаты
+                        alert('Функционал покупки будет реализован позже. Товар добавлен в корзину!');
+                      } catch (e: any) {
+                        alert(e.message || 'Ошибка при оформлении покупки');
+                      } finally {
+                        setPurchasing(false);
+                      }
+                    }}
+                    disabled={purchasing}
+                    className="w-full"
+                  >
+                    <FaShoppingCart className="mr-2" />
+                    {purchasing ? 'Оформление...' : 'Купить'}
+                  </Button>
+                ) : !isAuthenticated ? (
+                  <Button
+                    onClick={() => navigate(`/login?returnUrl=${encodeURIComponent(`/products/${id}`)}`)}
+                    variant="primary"
+                    className="w-full"
+                  >
+                    <FaShoppingCart className="mr-2" />
+                    Войти для покупки
+                  </Button>
+                ) : product.stock_quantity !== undefined && product.stock_quantity <= 0 ? (
+                  <Button
+                    disabled
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Нет в наличии
+                  </Button>
+                ) : null}
               </div>
             </div>
           </div>

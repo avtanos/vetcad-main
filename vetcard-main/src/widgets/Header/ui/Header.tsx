@@ -13,8 +13,15 @@ export const Header = () => {
         {isAuthenticated && user ? (
           <AuthNav
             user={{
-              name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
-              role: user['role'] === 2 ? 'professional' : user['role'] === 3 ? 'partner' : 'owner',
+              name: (() => {
+                const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+                if (!fullName && user.role === 4) {
+                  return 'Администратор Системы';
+                }
+                return fullName || user.username || 'Пользователь';
+              })(),
+              role: user.role === 4 ? 'admin' : user.role === 2 ? 'professional' : user.role === 3 ? 'partner' : 'owner',
+              userId: user.id,
             }}
             onLogout={logout}
           />

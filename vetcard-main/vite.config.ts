@@ -5,7 +5,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/vetcad-main/',
+  base: process.env.NODE_ENV === 'production' ? '/vetcad-main/' : '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),

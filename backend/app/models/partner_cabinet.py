@@ -85,7 +85,13 @@ class PartnerPromotion(Base):
     views_count = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
     
+    # Привязка к товару или услуге
+    product_id = Column(Integer, ForeignKey("ref_shop.id"), nullable=True)  # Товар
+    service_id = Column(Integer, ForeignKey("partner_services.id"), nullable=True)  # Услуга
+    
     partner = relationship("User")
+    product = relationship("RefShop", foreign_keys=[product_id])
+    service = relationship("PartnerService", foreign_keys=[service_id])
 
 
 class ProductView(Base):

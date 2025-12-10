@@ -17,6 +17,7 @@ async function refreshAccessToken() {
 
 async function fetchWithAuthRetry(input: RequestInfo, init?: RequestInit, retry = true): Promise<Response> {
     let accessToken = localStorage.getItem('authToken');
+    // Добавляем токен только если он есть (для публичных endpoints это не обязательно)
     if (accessToken) {
         init = init || {};
         init.headers = {
@@ -25,7 +26,8 @@ async function fetchWithAuthRetry(input: RequestInfo, init?: RequestInit, retry 
         };
     }
     let response = await fetch(input, init);
-    if (response.status === 401 && retry) {
+    // Пытаемся обновить токен только если получили 401 и есть refresh токен
+    if (response.status === 401 && retry && accessToken) {
         try {
             accessToken = await refreshAccessToken();
             if (accessToken) {
@@ -37,6 +39,8 @@ async function fetchWithAuthRetry(input: RequestInfo, init?: RequestInit, retry 
             }
             response = await fetch(input, init);
         } catch {
+            // Если не удалось обновить токен, возвращаем исходный ответ
+            // Это позволит публичным endpoints работать без авторизации
         }
     }
     return response;

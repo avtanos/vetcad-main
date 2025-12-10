@@ -8,6 +8,7 @@ export interface AuthNavProps {
   user: {
     name: string;
     role: string;
+    userId?: number;
   };
   onLogout: () => void;
 }
@@ -15,12 +16,25 @@ export interface AuthNavProps {
 export const AuthNav = ({ user, onLogout }: AuthNavProps) => {
   const { toggle: toggleSidebar } = useSidebarContext();
 
+  const getProfileLink = () => {
+    if (user.role === "admin") {
+      return user.userId ? `/admin/users/${user.userId}` : "/admin";
+    }
+    if (user.role === "professional") {
+      return "/vet/mydata";
+    }
+    if (user.role === "partner") {
+      return "/partner/mydata";
+    }
+    return "/userprofile";
+  };
+
   return (
     <>
       <nav className="hidden lg:flex items-center gap-6">
         <Link
-          to={user.role === "professional" ? "/mydata" : "/userprofile"}
-          className="flex items-center gap-2 text-slate-600 hover:text-slate-900"
+          to={getProfileLink()}
+          className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
         >
           <FaUserCircle className="w-8 h-8 text-slate-300" />
           <span className="text-sm font-medium">{user.name}</span>
@@ -37,8 +51,8 @@ export const AuthNav = ({ user, onLogout }: AuthNavProps) => {
       <div className="lg:hidden flex justify-between items-center w-full">
         <div className="flex items-center gap-2">
           <Link
-            to={user.role === "professional" ? "/mydata" : "/userprofile"}
-            className="flex items-center gap-2 text-slate-600 hover:text-slate-900"
+            to={getProfileLink()}
+            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
           >
             <FaUserCircle className="w-8 h-8 text-slate-300" />
             <span className="text-sm font-medium">{user.name}</span>

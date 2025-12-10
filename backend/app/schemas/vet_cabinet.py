@@ -28,6 +28,12 @@ class VetAppointmentResponse(VetAppointmentBase):
         from_attributes = True
 
 
+class VetAppointmentUpdate(BaseModel):
+    """Обновление записи ветеринаром"""
+    status: Optional[str] = None  # pending, confirmed, completed, cancelled
+    notes: Optional[str] = None
+
+
 class VetConsultationBase(BaseModel):
     pet_id: int
     question: str
@@ -88,6 +94,28 @@ class PetCardSummary(BaseModel):
     weight: Optional[float] = None
     special_notes: Optional[str] = None
     owner_name: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+
+class VeterinarianPublic(BaseModel):
+    """Публичная информация о ветеринаре"""
+    id: int
+    username: str
+    email: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    third_name: Optional[str] = None
+    phone: Optional[str] = None
+    clinic: Optional[str] = None
+    position: Optional[str] = None
+    specialization: Optional[str] = None
+    experience: Optional[str] = None  # Может быть строкой или числом
+    license_number: Optional[str] = None
+    city: Optional[str] = None
+    address: Optional[str] = None
+    description: Optional[str] = None
     
     class Config:
         from_attributes = True

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '@/shared/api';
-import { FaUsers, FaCalendarAlt, FaComments, FaFileAlt, FaPlus } from 'react-icons/fa';
+import { FaUsers, FaCalendarAlt, FaComments, FaFileAlt, FaPlus, FaEdit, FaCheck, FaTimes, FaBox } from 'react-icons/fa';
 import { ConsultationAnswerForm } from '@/features/consultation-answer/ui/ConsultationAnswerForm';
 import { Modal } from '@/shared/ui/Modal';
+import { Button } from '@/shared/ui/Button';
 
 interface Patient {
   id: number;
@@ -23,6 +25,20 @@ interface Appointment {
   reason?: string;
   status: string;
   notes?: string;
+  pet?: {
+    id: number;
+    name: string;
+    species: string;
+    breed?: string;
+  };
+  pet_owner?: {
+    id: number;
+    username: string;
+    profile?: {
+      first_name?: string;
+      last_name?: string;
+    };
+  };
 }
 
 interface Consultation {
@@ -48,6 +64,7 @@ interface Article {
 }
 
 export const VetCabinetPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'patients' | 'appointments' | 'consultations' | 'articles'>('patients');
   const [patients, setPatients] = useState<Patient[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -56,6 +73,9 @@ export const VetCabinetPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [answeringConsultation, setAnsweringConsultation] = useState<number | null>(null);
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
+  const [appointmentNotes, setAppointmentNotes] = useState('');
+  const [appointmentStatus, setAppointmentStatus] = useState<string>('');
 
   useEffect(() => {
     loadData();
@@ -99,7 +119,17 @@ export const VetCabinetPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-slate-800 mb-8">Кабинет ветеринара</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-slate-800">Кабинет ветеринара</h1>
+        <Button
+          onClick={() => navigate('/my-products')}
+          variant="primary"
+          className="flex items-center gap-2"
+        >
+          <FaBox />
+          Мои товары
+        </Button>
+      </div>
 
       {/* Вкладки */}
       <div className="border-b border-slate-200 mb-6">
@@ -140,9 +170,11 @@ export const VetCabinetPage = () => {
           {activeTab === 'patients' && (
             <div className="bg-white rounded-lg shadow">
               {patients.length === 0 ? (
-                <div className="p-12 text-center text-slate-500">
-                  <FaUsers className="mx-auto mb-4 text-4xl text-slate-300" />
-                  <p>Пока нет пациентов</p>
+                <div className="p-12 text-center text-slate-500 min-h-[400px] flex items-center justify-center">
+                  <div>
+                    <FaUsers className="mx-auto mb-4 text-6xl text-slate-300" />
+                    <p className="text-lg text-slate-400">Пока нет пациентов</p>
+                  </div>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -157,6 +189,12 @@ export const VetCabinetPage = () => {
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                           Порода
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          Дата рождения
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          Вес
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                           Владелец
@@ -179,10 +217,18 @@ export const VetCabinetPage = () => {
                             {patient.breed || '-'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-slate-500">
+                            {patient.birth_date ? new Date(patient.birth_date).toLocaleDateString('ru-RU') : '-'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-slate-500">
+                            {patient.weight ? `${patient.weight} кг` : '-'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-slate-500">
                             {patient.owner_name || '-'}
                           </td>
-                          <td className="px-6 py-4 text-slate-500">
-                            {patient.special_notes || '-'}
+                          <td className="px-6 py-4 text-slate-500 max-w-xs">
+                            <div className="truncate" title={patient.special_notes || ''}>
+                              {patient.special_notes || '-'}
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -205,29 +251,57 @@ export const VetCabinetPage = () => {
                 <div className="divide-y divide-slate-200">
                   {appointments.map((appointment) => (
                     <div key={appointment.id} className="p-6 hover:bg-slate-50">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-semibold text-slate-900">
-                            {new Date(appointment.appointment_date).toLocaleString('ru-RU')}
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-grow">
+                          <p className="font-semibold text-slate-900 text-lg">
+                            {new Date(appointment.appointment_date).toLocaleString('ru-RU', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </p>
+                          {appointment.pet && (
+                            <p className="text-slate-600 mt-1">
+                              Питомец: <span className="font-medium">{appointment.pet.name}</span>
+                              {appointment.pet.breed && ` (${appointment.pet.breed})`}
+                            </p>
+                          )}
                           {appointment.reason && (
                             <p className="text-slate-600 mt-1">Причина: {appointment.reason}</p>
                           )}
                           {appointment.notes && (
-                            <p className="text-slate-500 mt-2 text-sm">{appointment.notes}</p>
+                            <div className="mt-2 p-3 bg-slate-50 rounded border-l-4 border-teal-500">
+                              <p className="text-sm font-medium text-slate-700 mb-1">Заметки:</p>
+                              <p className="text-slate-600 text-sm">{appointment.notes}</p>
+                            </div>
                           )}
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                          appointment.status === 'completed' ? 'bg-blue-100 text-blue-800' :
-                          appointment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {appointment.status === 'pending' ? 'Ожидает' :
-                           appointment.status === 'confirmed' ? 'Подтверждена' :
-                           appointment.status === 'completed' ? 'Завершена' :
-                           'Отменена'}
-                        </span>
+                        <div className="flex items-center gap-3 ml-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                            appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                            appointment.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                            appointment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {appointment.status === 'pending' ? 'Ожидает' :
+                             appointment.status === 'confirmed' ? 'Подтверждена' :
+                             appointment.status === 'completed' ? 'Завершена' :
+                             'Отменена'}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setEditingAppointment(appointment);
+                              setAppointmentNotes(appointment.notes || '');
+                              setAppointmentStatus(appointment.status);
+                            }}
+                            className="p-2 text-teal-600 hover:bg-teal-50 rounded transition-colors"
+                            title="Редактировать запись"
+                          >
+                            <FaEdit />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -339,6 +413,95 @@ export const VetCabinetPage = () => {
             }}
             onCancel={() => setAnsweringConsultation(null)}
           />
+        </Modal>
+      )}
+
+      {/* Модальное окно для редактирования записи */}
+      {editingAppointment && (
+        <Modal
+          isOpen={true}
+          onClose={() => {
+            setEditingAppointment(null);
+            setAppointmentNotes('');
+            setAppointmentStatus('');
+          }}
+          title="Управление записью"
+        >
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-slate-600 mb-2">
+                Дата и время: {new Date(editingAppointment.appointment_date).toLocaleString('ru-RU')}
+              </p>
+              {editingAppointment.reason && (
+                <p className="text-sm text-slate-600 mb-2">Причина: {editingAppointment.reason}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Статус записи
+              </label>
+              <select
+                value={appointmentStatus}
+                onChange={(e) => setAppointmentStatus(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="pending">Ожидает</option>
+                <option value="confirmed">Подтверждена</option>
+                <option value="completed">Завершена</option>
+                <option value="cancelled">Отменена</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Заметки ветеринара
+              </label>
+              <textarea
+                value={appointmentNotes}
+                onChange={(e) => setAppointmentNotes(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                rows={4}
+                placeholder="Добавьте заметки о приеме..."
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                variant="primary"
+                onClick={async () => {
+                  try {
+                    await api.put(`/v1/vet/appointments/${editingAppointment.id}`, {
+                      status: appointmentStatus,
+                      notes: appointmentNotes || undefined
+                    });
+                    await loadData();
+                    setEditingAppointment(null);
+                    setAppointmentNotes('');
+                    setAppointmentStatus('');
+                  } catch (e: any) {
+                    alert(e.message || 'Ошибка при сохранении изменений');
+                  }
+                }}
+                className="flex-1"
+              >
+                <FaCheck className="mr-2" />
+                Сохранить
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingAppointment(null);
+                  setAppointmentNotes('');
+                  setAppointmentStatus('');
+                }}
+                className="flex-1"
+              >
+                <FaTimes className="mr-2" />
+                Отмена
+              </Button>
+            </div>
+          </div>
         </Modal>
       )}
     </div>

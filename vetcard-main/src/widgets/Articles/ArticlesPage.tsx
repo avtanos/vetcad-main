@@ -43,36 +43,45 @@ export const ArticlesPage = () => {
     }
 
     return (
-        <div className="space-y-8">
-            <header className="flex flex-col md:flex-row justify-between md:items-center gap-6">
-                <div>
-                    <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-900">
-                        <FaNewspaper className="text-teal-500" />
-                        {t('articles.title')}
-                    </h1>
-                    <p className="mt-2 text-slate-600">{t('articles.description')}</p>
+        <div className="max-w-7xl mx-auto py-8 px-4 md:px-6 lg:px-8">
+            {/* Заголовок и поиск */}
+            <header className="mb-8">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
+                    <div className="flex-1">
+                        <h1 className="flex items-center gap-3 text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+                            <FaNewspaper className="text-teal-500 flex-shrink-0" />
+                            База знаний
+                        </h1>
+                        <p className="text-slate-600 text-base md:text-lg">
+                            {t('articles.description') || 'Полезные статьи и советы по уходу за вашими питомцами.'}
+                        </p>
+                    </div>
+                    <div className="lg:w-80 flex-shrink-0">
+                        <SearchArticles value={searchQuery} onChange={setSearchQuery} />
+                    </div>
                 </div>
-                <SearchArticles value={searchQuery} onChange={setSearchQuery} />
+
+                {/* Фильтры категорий */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-2
+                       [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    {categories.map(category => (
+                        <button
+                            key={category}
+                            onClick={() => setActiveCategory(category)}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap flex-shrink-0 ${
+                                activeCategory === category
+                                    ? 'bg-blue-600 text-white shadow-md'
+                                    : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                            }`}
+                        >
+                            {category}
+                        </button>
+                    ))}
+                </div>
             </header>
 
-            <div className="hidden sm:flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto
-                   [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {categories.map(category => (
-                    <button
-                        key={category}
-                        onClick={() => setActiveCategory(category)}
-                        className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
-                            activeCategory === category
-                                ? 'bg-teal-500 text-white shadow'
-                                : 'text-slate-600 hover:bg-slate-200'
-                        }`}
-                    >
-                        {category}
-                    </button>
-                ))}
-            </div>
-
-            <div className="sm:hidden">
+            {/* Мобильный выбор категории */}
+            <div className="sm:hidden mb-6">
                 <CategoryPicker
                     categories={categories}
                     activeCategory={activeCategory}
@@ -80,8 +89,15 @@ export const ArticlesPage = () => {
                 />
             </div>
 
-            {filteredArticles.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Сетка статей */}
+            {loading ? (
+                <div className="text-center py-12">
+                    <Loader />
+                </div>
+            ) : error ? (
+                <div className="text-center py-12 text-red-500">{error}</div>
+            ) : filteredArticles.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {filteredArticles.map(article => (
                         <ArticleCard key={article.id} article={article} />
                     ))}

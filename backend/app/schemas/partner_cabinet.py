@@ -96,6 +96,8 @@ class PartnerPromotionBase(BaseModel):
     start_date: datetime
     end_date: datetime
     is_active: bool = True
+    product_id: Optional[int] = None  # ID товара
+    service_id: Optional[int] = None  # ID услуги
 
 
 class PartnerPromotionCreate(PartnerPromotionBase):

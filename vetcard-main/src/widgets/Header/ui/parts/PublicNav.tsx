@@ -43,6 +43,9 @@ const PublicNav = () => {
       <nav className="hidden md:flex items-center gap-6">
         <NavLink to="/">{t("home")}</NavLink>
         <NavLink to="/about">{t("about")}</NavLink>
+        <NavLink to="/articles">{t("navigation.articles")}</NavLink>
+        <NavLink to="/products">{t("navigation.products")}</NavLink>
+        <NavLink to="/specialists">{t("sidebar.specialists")}</NavLink>
         <LanguageSwitcher />
         <Button to="/login" variant="outline" className="text-sm py-2 px-4">
           {t("login")}
@@ -80,6 +83,15 @@ const PublicNav = () => {
             </NavLink>
             <NavLink to="/about" onClick={toggleMenu}>
               {t("about")}
+            </NavLink>
+            <NavLink to="/articles" onClick={toggleMenu}>
+              {t("navigation.articles")}
+            </NavLink>
+            <NavLink to="/products" onClick={toggleMenu}>
+              {t("navigation.products")}
+            </NavLink>
+            <NavLink to="/specialists" onClick={toggleMenu}>
+              {t("sidebar.specialists")}
             </NavLink>
             <LanguageSwitcher />
             <hr className="w-11/12 border-slate-200" />

@@ -17,7 +17,8 @@ try:
     role_names = {
         1: "Владелец питомца",
         2: "Ветеринар",
-        3: "Партнер"
+        3: "Партнер",
+        4: "Супер администратор"
     }
     
     for user in users:
@@ -33,6 +34,8 @@ try:
             print(f"   Кабинет: /vet/cabinet")
         elif profile and profile.role == 3:
             print(f"   Кабинет: /partner/cabinet")
+        elif profile and profile.role == 4:
+            print(f"   Админ-панель: /api/v1/admin/*")
         
         print()
     

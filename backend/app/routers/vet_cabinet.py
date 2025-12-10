@@ -6,18 +6,52 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
 from app.dependencies import get_current_user
-from app.models.user import User
+from app.models.user import User, Profile
 from app.models.pet import Pet
 from app.models.reference import TypeOfAnimal
 from app.models.vet_cabinet import VetAppointment, VetConsultation, VetArticle
 from app.schemas.vet_cabinet import (
-    VetAppointmentResponse, VetAppointmentCreate,
+    VetAppointmentResponse, VetAppointmentCreate, VetAppointmentUpdate,
     VetConsultationResponse, VetConsultationCreate, VetConsultationAnswer,
-    VetArticleResponse, VetArticleCreate, PetCardSummary
+    VetArticleResponse, VetArticleCreate, PetCardSummary, VeterinarianPublic
 )
 from datetime import datetime
 
 router = APIRouter()
+
+
+@router.get("/list", response_model=List[VeterinarianPublic])
+async def get_veterinarians(
+    db: Session = Depends(get_db)
+):
+    """Получить список всех ветеринаров (публичный endpoint)"""
+    veterinarians = db.query(User).join(Profile).filter(
+        Profile.role == 2,
+        User.is_active == True
+    ).all()
+    
+    result = []
+    for vet in veterinarians:
+        if vet.profile:
+            result.append(VeterinarianPublic(
+                id=vet.id,
+                username=vet.username,
+                email=vet.email,
+                first_name=vet.profile.first_name,
+                last_name=vet.profile.last_name,
+                third_name=vet.profile.third_name,
+                phone=vet.profile.phone,
+                clinic=vet.profile.clinic,
+                position=vet.profile.position,
+                specialization=vet.profile.specialization,
+                experience=vet.profile.experience,
+                license_number=vet.profile.license_number,
+                city=vet.profile.city,
+                address=vet.profile.address,
+                description=vet.profile.description
+            ))
+    
+    return result
 
 
 def verify_vet_role(current_user: User = Depends(get_current_user)):
@@ -86,6 +120,37 @@ async def get_appointments(
     
     appointments = query.order_by(VetAppointment.appointment_date).all()
     return appointments
+
+
+@router.put("/appointments/{appointment_id}", response_model=VetAppointmentResponse)
+async def update_appointment(
+    appointment_id: int,
+    appointment_data: VetAppointmentUpdate,
+    current_user: User = Depends(verify_vet_role),
+    db: Session = Depends(get_db)
+):
+    """Обновить запись (изменить статус или добавить заметки)"""
+    appointment = db.query(VetAppointment).filter(
+        VetAppointment.id == appointment_id,
+        VetAppointment.vet_id == current_user.id
+    ).first()
+    
+    if not appointment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Запись не найдена"
+        )
+    
+    if appointment_data.status:
+        appointment.status = appointment_data.status
+    
+    if appointment_data.notes is not None:
+        appointment.notes = appointment_data.notes
+    
+    db.commit()
+    db.refresh(appointment)
+    
+    return appointment
 
 
 @router.get("/consultations", response_model=List[VetConsultationResponse])

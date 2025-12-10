@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '@/entities/user/model/useAuth';
 import { useSidebarContext } from '../model/SidebarContext';
-import { useOwnerNavConfig, useProfessionalNavConfig, usePartnerNavConfig, NavSection } from '../config/links';
+import { useOwnerNavConfig, useProfessionalNavConfig, usePartnerNavConfig, useAdminNavConfig, NavSection } from '../config/links';
 import { Button } from '@/shared/ui/Button';
 import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 import { Logo } from '@/shared/ui/Logo';
@@ -116,11 +116,13 @@ export const Sidebar = () => {
   const { isOpen: isMobileOpen, close: closeMobileSidebar } = useSidebarContext();
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
 
-  const navConfig = user?.role === 2
-    ? useProfessionalNavConfig()
-    : user?.role === 3
-      ? usePartnerNavConfig()
-      : useOwnerNavConfig();
+  const navConfig = user?.role === 4
+    ? useAdminNavConfig()
+    : user?.role === 2
+      ? useProfessionalNavConfig()
+      : user?.role === 3
+        ? usePartnerNavConfig()
+        : useOwnerNavConfig();
 
   return (
     <>
