@@ -7,7 +7,7 @@ import '@/locale/i18n';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/vetcad-main">
       <Router />
     </BrowserRouter>
   </React.StrictMode>
