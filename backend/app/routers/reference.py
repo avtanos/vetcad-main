@@ -62,7 +62,10 @@ async def create_product(
         is_active=product_data.is_active,
         img_url=product_data.img_url,
         description=product_data.description,
-        user_id=current_user.id if product_data.user is None else product_data.user
+        user_id=current_user.id if product_data.user is None else product_data.user,
+        subcategory_id=product_data.subcategory_id,
+        price=product_data.price,
+        stock_quantity=product_data.stock_quantity
     )
     db.add(db_product)
     db.commit()
@@ -108,6 +111,9 @@ async def update_product(
     product.is_active = product_data.is_active
     product.img_url = product_data.img_url
     product.description = product_data.description
+    product.subcategory_id = product_data.subcategory_id
+    product.price = product_data.price
+    product.stock_quantity = product_data.stock_quantity
     
     db.commit()
     db.refresh(product)
@@ -199,4 +205,3 @@ async def get_subcategory(
             detail="Подкатегория не найдена"
         )
     return subcategory
-

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import auth, pet, reference, parser, assistant, chat, vet_cabinet, partner_cabinet, owner_cabinet, admin, product_category
+from app.routers import auth, pet, reference, parser, assistant, chat, vet_cabinet, partner_cabinet, owner_cabinet, admin
 
 # Импортируем все модели для создания таблиц
 from app.models import user as user_model, pet as pet_model, reference as reference_model, article as article_model, reminder as reminder_model

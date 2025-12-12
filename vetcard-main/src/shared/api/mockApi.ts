@@ -27,13 +27,32 @@ function delay(ms: number = 300): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Генерация уникального ID на основе максимального существующего ID
+function generateNextId<T extends { id: number | string }>(items: T[], isString: boolean = false): number | string {
+  if (items.length === 0) {
+    return isString ? '1' : 1;
+  }
+  const maxId = items.reduce((max, item) => {
+    const id = typeof item.id === 'string' ? parseInt(item.id, 10) : item.id;
+    return Math.max(max, isNaN(id) ? 0 : id);
+  }, 0);
+  const nextId = maxId + 1;
+  return isString ? String(nextId) : nextId;
+}
+
+// Нормализация эндпоинта (удаление trailing slash для единообразия)
+function normalizeEndpoint(endpoint: string): string {
+  return endpoint.endsWith('/') && endpoint.length > 1 ? endpoint.slice(0, -1) : endpoint;
+}
+
 // Мокап API функции
 export const mockApi = {
   post: async <T, R>(endpoint: string, data: T): Promise<R> => {
     await delay();
+    const normalizedEndpoint = normalizeEndpoint(endpoint);
 
     // Авторизация
-    if (endpoint === '/v1/auth/token/') {
+    if (normalizedEndpoint === '/v1/auth/token') {
       const { username, password } = data as any;
       const user = Object.values(mockUsers).find(u => u.username === username);
       
@@ -51,16 +70,16 @@ export const mockApi = {
     }
 
     // Обновление токена
-    if (endpoint === '/v1/auth/token/refresh/') {
+    if (normalizedEndpoint === '/v1/auth/token/refresh') {
       const newToken = generateMockToken();
       localStorage.setItem('authToken', newToken);
       return { access: newToken } as R;
     }
 
     // Создание питомца
-    if (endpoint === '/v1/pet/') {
+    if (normalizedEndpoint === '/v1/pet') {
       const newPet = {
-        id: String(mockPets.length + 1),
+        id: generateNextId(mockPets, true),
         ...(data as any),
       };
       mockPets.push(newPet);
@@ -68,9 +87,9 @@ export const mockApi = {
     }
 
     // Создание напоминания
-    if (endpoint === '/v1/assistant/reminder/') {
+    if (normalizedEndpoint === '/v1/assistant/reminder') {
       const newReminder = {
-        id: mockReminders.length + 1,
+        id: generateNextId(mockReminders, false),
         ...(data as any),
       };
       mockReminders.push(newReminder);
@@ -78,9 +97,9 @@ export const mockApi = {
     }
 
     // Создание товара
-    if (endpoint === '/v1/reference/ref_shop/') {
+    if (normalizedEndpoint === '/v1/reference/ref_shop') {
       const newProduct = {
-        id: mockProducts.length + 1,
+        id: generateNextId(mockProducts, false),
         ...(data as any),
       };
       mockProducts.push(newProduct);
@@ -88,9 +107,9 @@ export const mockApi = {
     }
 
     // Создание консультации
-    if (endpoint === '/v1/vet/consultations') {
+    if (normalizedEndpoint === '/v1/vet/consultations') {
       const newConsultation = {
-        id: mockVetConsultations.length + 1,
+        id: generateNextId(mockVetConsultations, false),
         ...(data as any),
         status: 'pending',
         answered_at: null,
@@ -100,9 +119,9 @@ export const mockApi = {
     }
 
     // Создание записи
-    if (endpoint === '/v1/vet/appointments') {
+    if (normalizedEndpoint === '/v1/vet/appointments') {
       const newAppointment = {
-        id: mockVetAppointments.length + 1,
+        id: generateNextId(mockVetAppointments, false),
         ...(data as any),
       };
       mockVetAppointments.push(newAppointment);
@@ -110,9 +129,9 @@ export const mockApi = {
     }
 
     // Создание статьи ветеринара
-    if (endpoint === '/v1/vet/articles') {
+    if (normalizedEndpoint === '/v1/vet/articles') {
       const newArticle = {
-        id: mockVetArticles.length + 1,
+        id: generateNextId(mockVetArticles, false),
         ...(data as any),
         views_count: 0,
         created_at: new Date().toISOString(),
@@ -122,7 +141,7 @@ export const mockApi = {
     }
 
     // AI чат
-    if (endpoint === '/v1/ai/chat/') {
+    if (normalizedEndpoint === '/v1/ai/chat') {
       // Простой мокап ответа AI
       const responses = [
         'Это интересный вопрос о здоровье питомца. Рекомендую проконсультироваться с ветеринаром для точного диагноза.',
@@ -136,9 +155,9 @@ export const mockApi = {
     }
 
     // Создание записи к ветеринару
-    if (endpoint === '/v1/owner/appointments/') {
+    if (normalizedEndpoint === '/v1/owner/appointments') {
       const newAppointment = {
-        id: mockVetAppointments.length + 1,
+        id: generateNextId(mockVetAppointments, false),
         ...(data as any),
         pet_owner_name: 'Иван Петров',
         pet_name: 'Рекс',
@@ -154,9 +173,10 @@ export const mockApi = {
 
   get: async <R>(endpoint: string): Promise<R> => {
     await delay();
+    const normalizedEndpoint = normalizeEndpoint(endpoint);
 
     // Получение профиля пользователя
-    if (endpoint === '/v1/auth/get_profile/') {
+    if (normalizedEndpoint === '/v1/auth/get_profile') {
       const token = localStorage.getItem('authToken');
       if (!token) throw new Error('Не авторизован');
       
@@ -165,37 +185,37 @@ export const mockApi = {
     }
 
     // Получение питомцев
-    if (endpoint === '/v1/pet/') {
+    if (normalizedEndpoint === '/v1/pet') {
       return mockPets as R;
     }
 
     // Получение типов животных
-    if (endpoint === '/v1/reference/ref_type_of_animal/') {
+    if (normalizedEndpoint === '/v1/reference/ref_type_of_animal') {
       return mockAnimalTypes as R;
     }
 
     // Получение статей
-    if (endpoint === '/v1/parser/articles/') {
+    if (normalizedEndpoint === '/v1/parser/articles') {
       return mockArticles as R;
     }
 
     // Получение напоминаний
-    if (endpoint === '/v1/assistant/reminder/') {
+    if (normalizedEndpoint === '/v1/assistant/reminder') {
       return mockReminders as R;
     }
 
     // Получение товаров
-    if (endpoint === '/v1/reference/ref_shop/') {
+    if (normalizedEndpoint === '/v1/reference/ref_shop') {
       return mockProducts as R;
     }
 
     // Получение категорий
-    if (endpoint === '/v1/reference/categories') {
+    if (normalizedEndpoint === '/v1/reference/categories') {
       return mockCategories as R;
     }
 
     // Получение подкатегорий
-    if (endpoint.startsWith('/v1/reference/subcategories')) {
+    if (normalizedEndpoint.startsWith('/v1/reference/subcategories')) {
       const url = new URL(endpoint, 'http://localhost');
       const categoryId = url.searchParams.get('category_id');
       if (categoryId) {
@@ -205,22 +225,22 @@ export const mockApi = {
     }
 
     // Получение пациентов ветеринара
-    if (endpoint === '/v1/vet/patients') {
+    if (normalizedEndpoint === '/v1/vet/patients') {
       return mockVetPatients as R;
     }
 
     // Получение записей ветеринара
-    if (endpoint === '/v1/vet/appointments') {
+    if (normalizedEndpoint === '/v1/vet/appointments') {
       return mockVetAppointments as R;
     }
 
     // Получение консультаций ветеринара
-    if (endpoint === '/v1/vet/consultations') {
+    if (normalizedEndpoint === '/v1/vet/consultations') {
       return mockVetConsultations as R;
     }
 
     // Получение статей ветеринара
-    if (endpoint === '/v1/vet/articles') {
+    if (normalizedEndpoint === '/v1/vet/articles') {
       return mockVetArticles as R;
     }
 
@@ -291,7 +311,7 @@ export const mockApi = {
     }
 
     // Обновление профиля
-    if (endpoint === '/v1/auth/update_profile/') {
+    if (normalizeEndpoint(endpoint) === '/v1/auth/update_profile') {
       return { ...mockUsers.petowner, ...(data as any) } as R;
     }
 
@@ -339,4 +359,3 @@ export const mockApi = {
 };
 
 export { USE_MOCK_DATA };
-

@@ -162,7 +162,16 @@ async def get_user(
             phone=profile.phone,
             city=profile.city,
             address=profile.address,
-            role=profile.role
+            role=profile.role,
+            clinic=profile.clinic,
+            position=profile.position,
+            specialization=profile.specialization,
+            experience=profile.experience,
+            license_number=profile.license_number,
+            name_of_organization=profile.name_of_organization,
+            type=profile.type,
+            website=profile.website,
+            description=profile.description
         ) if profile else None
     )
 
@@ -298,7 +307,16 @@ async def update_user(
             phone=profile.phone,
             city=profile.city,
             address=profile.address,
-            role=profile.role
+            role=profile.role,
+            clinic=profile.clinic,
+            position=profile.position,
+            specialization=profile.specialization,
+            experience=profile.experience,
+            license_number=profile.license_number,
+            name_of_organization=profile.name_of_organization,
+            type=profile.type,
+            website=profile.website,
+            description=profile.description
         ) if profile else None
     )
 
