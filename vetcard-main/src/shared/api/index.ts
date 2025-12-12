@@ -1,5 +1,8 @@
 // Для локальной разработки используем localhost, для продакшена - удаленный сервер
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'; 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
+// Импортируем мокап API для GitHub Pages
+import { mockApi, USE_MOCK_DATA } from './mockApi'; 
 
 async function refreshAccessToken() {
     const refresh = localStorage.getItem('refreshToken');
@@ -62,6 +65,10 @@ const handleResponse = async (response: Response) => {
 
 export const api = {
     post: async <T, R>(endpoint: string, data: T, headers?: Record<string, string>): Promise<R> => {
+        // Используем мокап API для GitHub Pages
+        if (USE_MOCK_DATA) {
+            return mockApi.post<T, R>(endpoint, data);
+        }
         const response = await fetchWithAuthRetry(`${API_BASE_URL}${endpoint}`, {
             method: 'POST',
             headers: {
@@ -73,6 +80,10 @@ export const api = {
         return handleResponse(response);
     },
     put: async <T, R>(endpoint: string, data: T, headers?: Record<string, string>): Promise<R> => {
+        // Используем мокап API для GitHub Pages
+        if (USE_MOCK_DATA) {
+            return mockApi.put<T, R>(endpoint, data);
+        }
         const response = await fetchWithAuthRetry(`${API_BASE_URL}${endpoint}`, {
             method: 'PUT',
             headers: {
@@ -84,6 +95,10 @@ export const api = {
         return handleResponse(response);
     },
     get: async <R>(endpoint: string, headers?: Record<string, string>): Promise<R> => {
+        // Используем мокап API для GitHub Pages
+        if (USE_MOCK_DATA) {
+            return mockApi.get<R>(endpoint);
+        }
         const response = await fetchWithAuthRetry(`${API_BASE_URL}${endpoint}`, {
             method: 'GET',
             headers: {
@@ -94,6 +109,10 @@ export const api = {
         return handleResponse(response);
     },
     delete: async <T, R>(endpoint: string, data?: T, headers?: Record<string, string>): Promise<R> => {
+        // Используем мокап API для GitHub Pages
+        if (USE_MOCK_DATA) {
+            return mockApi.delete<T, R>(endpoint);
+        }
         const response = await fetchWithAuthRetry(`${API_BASE_URL}${endpoint}`, {
             method: 'DELETE',
             headers: {
